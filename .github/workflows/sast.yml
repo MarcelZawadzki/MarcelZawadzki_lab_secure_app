@@ -1,31 +1,35 @@
 name: Perform Mixeway Scan
 
 jobs:
-    mixeway-scan:
-        name: Mixeway Scanning
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v1
-            - name: Prepare variables
-              id: vars
-              shell: bash
-              run: |
-    echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-    echo "::set-output name=sha_short::$(git rev-parse HEAD)"
-    - name: Prepare Mixeway docker image
-    run: |
-    docker pull mixeway/scanner:latest
-    - name: Run Scan
+  mixeway-scan:
+    name: Mixeway Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Prepare variables
+        id: vars
+        shell: bash
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "::set-output name=sha_short::$(git rev-parse HEAD)"
+
+      - name: Prepare Mixeway docker image
+        run: |
+          docker pull mixeway/scanner:latest
+
+      - name: Run Scan
         run: |
           docker run \
             -e MODE=STANDALONE \
-            -e OSS_USERNAME=zlomiarztomasz@gmail.com  \
-            -e OSS_KEY=6222ff7f92001bfd4551de0f4772e2569ba27959  \
+            -e OSS_USERNAME=zlomiarztomasz@gmail.com \
+            -e OSS_KEY=6222ff7f92001bfd4551de0f4772e2569ba27959 \
             -e MIXEWAY_URL=https://hub.mixeway.io \
             -e MIXEWAY_KEY=cbe9b883-4621-4c6c-a92a-3367a5c21b94 \
-            -e MIXEWAY_PROJECT_ID = 185 \
+            -e MIXEWAY_PROJECT_ID=185 \
             -e MIXEWAY_PROJECT_NAME=MarcelZawadzki_lab_secure_app \
             -e COMMIT_ID=test \
             -e BRANCH=master \
             -v /opt/lab_sec_audit/sast:/opt/sources \
             mixeway/scanner:latest
+
